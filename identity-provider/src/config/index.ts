@@ -269,3 +269,19 @@ export function logConfigSummary(): void {
     console.log('=====================================');
   }
 }
+
+/**
+ * Debug logging function
+ * 
+ * Logs debug messages with component context when in development mode.
+ * In production, debug logs are suppressed for performance and security.
+ * 
+ * @param component Component name for context (e.g., 'AUTHORIZE', 'TOKEN')
+ * @param message Log message
+ */
+export function debugLog(component: string, message: string): void {
+  if (config.logLevel === 'debug' && config.environment === 'development') {
+    const timestamp = new Date().toISOString();
+    console.log(`🐛 ${timestamp} [${component}] ${message}`);
+  }
+}

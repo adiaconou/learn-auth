@@ -468,7 +468,7 @@ export const consentStore = {
    * @param clientId Client identifier
    * @returns Consent key for map storage
    */
-  private getConsentKey(userId: string, clientId: string): string {
+  getConsentKey(userId: string, clientId: string): string {
     return `${userId}:${clientId}`;
   },
   

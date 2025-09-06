@@ -28,14 +28,20 @@ export interface PKCEParams {
  * Uses browser's crypto.getRandomValues for security.
  * 
  * @param length - Length of random string (default: 128, max for PKCE)
+ * @param enforcePKCELength - Whether to enforce PKCE length limits (43-128 chars)
  * @returns Base64url encoded random string
  */
-export function generateRandomString(length: number = 128): string {
+export function generateRandomString(length: number = 128, enforcePKCELength: boolean = false): string {
   debugLog('CRYPTO', `Generating random string of length ${length}`);
   
-  // Validate length for PKCE compliance (RFC 7636: 43-128 characters)
-  if (length < 43 || length > 128) {
+  // Validate length for PKCE compliance only if specifically requested
+  if (enforcePKCELength && (length < 43 || length > 128)) {
     throw new Error(`Invalid length ${length}. PKCE code verifier must be 43-128 characters.`);
+  }
+  
+  // General validation for reasonable length limits
+  if (length < 1 || length > 256) {
+    throw new Error(`Invalid length ${length}. Must be between 1-256 characters.`);
   }
   
   // Generate random bytes using browser crypto API
@@ -126,7 +132,7 @@ export async function generatePKCEParams(): Promise<PKCEParams> {
   
   try {
     // Step 1: Generate cryptographically random code verifier
-    const codeVerifier = generateRandomString(128); // Maximum entropy
+    const codeVerifier = generateRandomString(128, true); // Maximum entropy with PKCE validation
     debugLog('PKCE', `Code verifier generated: ${codeVerifier.length} characters`);
     
     // Step 2: Compute SHA256 hash of code verifier

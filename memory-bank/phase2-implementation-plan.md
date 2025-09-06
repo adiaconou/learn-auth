@@ -404,14 +404,14 @@ interface DiscoveryDocument {
 - [x] **Details**: Password hashing (bcrypt), user validation, profile retrieval, hardcoded test users initially
 
 ### Step 7: Client Management Service
-- [ ] **File**: `identity-provider/src/services/client.ts`
-- [ ] **Action**: OAuth client validation and management
-- [ ] **Details**: Client registration, redirect URI validation, scope validation, PKCE requirements
+- [x] **File**: `identity-provider/src/services/client.ts`
+- [x] **Action**: OAuth client validation and management
+- [x] **Details**: Client registration, redirect URI validation, scope validation, PKCE requirements
 
 ### Step 8: PKCE Service
-- [ ] **File**: `identity-provider/src/services/pkce.ts`
-- [ ] **Action**: PKCE code challenge/verifier validation
-- [ ] **Details**: SHA256 hashing, Base64 URL encoding/decoding, verifier validation
+- [x] **File**: `identity-provider/src/services/pkce.ts`
+- [x] **Action**: PKCE code challenge/verifier validation
+- [x] **Details**: SHA256 hashing, Base64 URL encoding/decoding, verifier validation
 
 ### Step 9: Session & CSRF Middleware
 - [ ] **File**: `identity-provider/src/middleware/session.ts` + `identity-provider/src/middleware/csrf.ts`
@@ -429,14 +429,14 @@ interface DiscoveryDocument {
 - [x] **Details**: Login form HTML, POST processing, session creation, password validation
 
 ### Step 12: Authorization Code Service
-- [ ] **File**: `identity-provider/src/services/authorization.ts`
-- [ ] **Action**: Authorization code generation and validation
-- [ ] **Details**: Code generation, PKCE challenge storage, expiration handling, one-time use
+- [x] **File**: `identity-provider/src/services/authorization.ts`
+- [x] **Action**: Authorization code generation and validation
+- [x] **Details**: Code generation, PKCE challenge storage, expiration handling, one-time use
 
 ### Step 13: Authorization Endpoint
-- [ ] **File**: `identity-provider/src/routes/authorize.ts`
-- [ ] **Action**: OAuth 2.0 authorization endpoint with PKCE
-- [ ] **Details**: Parameter validation, authentication check, consent flow, code generation
+- [x] **File**: `identity-provider/src/routes/authorize.ts`
+- [x] **Action**: OAuth 2.0 authorization endpoint with PKCE
+- [x] **Details**: Parameter validation, authentication check, consent flow, code generation
 
 ### Step 14: Consent Management
 - [ ] **File**: `identity-provider/src/services/consent.ts` + `identity-provider/src/routes/consent.ts` + `identity-provider/src/views/consent.html`
@@ -464,9 +464,9 @@ interface DiscoveryDocument {
 - [ ] **Details**: Session destruction, logout confirmation, redirect handling
 
 ### Step 19: Main Application
-- [ ] **File**: `identity-provider/src/app.ts`
-- [ ] **Action**: Main Express app with all middleware and routes
-- [ ] **Details**: Session setup, CORS, security headers, route mounting, error handling
+- [x] **File**: `identity-provider/src/app.ts`
+- [x] **Action**: Main Express app with all middleware and routes
+- [x] **Details**: Session setup, CORS, security headers, route mounting, error handling
 
 ### Step 20: Client Pre-registration
 - [ ] **File**: `identity-provider/src/routes/admin.ts`
