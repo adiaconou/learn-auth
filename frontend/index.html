@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OAuth 2.0 + OIDC Learning App</title>
+    
+    <!-- Security headers for OAuth 2.0 SPA -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    
+    <!-- Content Security Policy for secure SPA -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+                   style-src 'self' 'unsafe-inline'; 
+                   connect-src 'self' http://localhost:3000 http://localhost:3001; 
+                   img-src 'self' data:; 
+                   font-src 'self'" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    
+    <!-- Preconnect to Identity Provider and Resource Server for performance -->
+    <link rel="preconnect" href="http://localhost:3001" />
+    <link rel="preconnect" href="http://localhost:3000" />
+    
+    <!-- Basic styling for loading state -->
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f5f5f5;
+      }
+      
+      /* Loading screen styles */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+        z-index: 9999;
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Hide loading screen when app loads */
+      .loaded #loading {
+        display: none;
+      }
+      
+      /* React app root container */
+      #root {
+        min-height: 100vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading screen shown while React app initializes -->
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+    
+    <!-- React app mount point -->
+    <div id="root"></div>
+    
+    <!-- Hide loading screen when DOM is ready -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          document.body.classList.add('loaded');
+        }, 100);
+      });
+    </script>
+    
+    <!-- React application entry point -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

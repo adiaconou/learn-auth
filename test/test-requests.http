@@ -1,0 +1,387 @@
+###
+### OAuth 2.0 Resource Server API Testing
+### Phase 1 Implementation - Manual Testing with PKCE Examples
+###
+### Prerequisites:
+### 1. Start resource server: npm run dev (http://localhost:3000)
+### 2. Generate test tokens: node test/test-jwt.js basic
+### 3. Replace <TOKEN> placeholders with actual generated tokens
+###
+
+### ====================================
+### HEALTH CHECK (No Authentication)
+### ====================================
+
+### Test server health endpoint (should work without authentication)
+GET http://localhost:3000/health
+Content-Type: application/json
+
+### ====================================
+### AUTHENTICATION TESTS
+### ====================================
+
+### Test 1: Missing Authorization Header (401 Unauthorized)
+GET http://localhost:3000/notes
+Content-Type: application/json
+
+### Test 2: Invalid Bearer Token Format (401 Unauthorized)
+GET http://localhost:3000/notes
+Authorization: InvalidFormat
+Content-Type: application/json
+
+### Test 3: Malformed JWT Token (401 Unauthorized)
+GET http://localhost:3000/notes
+Authorization: Bearer invalid.jwt.token
+Content-Type: application/json
+
+### Test 4: Expired Token (401 Unauthorized)
+# Generate expired token: node test/test-jwt.js errors
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJ1c2VyMTIzIiwic2NvcGUiOiJub3RlczpyZWFkIiwiZXhwIjoxNzU2NDM1NzY4LCJpYXQiOjE3NTY0MzIxNjgsImp0aSI6IjA1ZGY0ZDlhLTZkODEtNGEzOC05MjcwLTM4ZGQ1YjlkMTQ0NSJ9.gn2PrfaokiKnE9VQau-bCb8jxJRg6SvVM8rcNrqd7ZQ
+Content-Type: application/json
+
+### Test 5: Invalid Signature (401 Unauthorized)
+# Generate invalid signature token: node test/test-jwt.js errors  
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJ1c2VyMTIzIiwic2NvcGUiOiJub3RlczpyZWFkIiwiZXhwIjoxNzU2NDQyOTY4LCJpYXQiOjE3NTY0MzkzNjgsImp0aSI6IjQ1MGRlYWJkLTY0YWMtNDljOC1iZWFiLTg3ZGZkMGFjZDZkNSJ9.qYImxHVSNbgptTBDvbMn8pawbJJmXDGQiGV8-r4KmAo
+Content-Type: application/json
+
+### Test 6: Wrong Issuer (401 Unauthorized)
+# Generate wrong issuer token: node test/test-jwt.js errors
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vZXZpbC1pZHAuY29tIiwiYXVkIjoibm90ZXMtYXBpIiwic3ViIjoidXNlcjEyMyIsInNjb3BlIjoibm90ZXM6cmVhZCIsImV4cCI6MTc1NjQ0Mjk2OCwiaWF0IjoxNzU2NDM5MzY4LCJqdGkiOiJkY2QxYzQ5Mi04ZWJhLTQ5ZjEtYWNkNi1hMmY2Y2RkNTcwY2MifQ.fDRi3nG7fBP87Cotv_Y5YyeyOG_upP5IKCdrQmyuAwo
+Content-Type: application/json
+
+### Test 7: Wrong Audience (401 Unauthorized)
+# Generate wrong audience token: node test/test-jwt.js errors
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJ3cm9uZy1hcGkiLCJzdWIiOiJ1c2VyMTIzIiwic2NvcGUiOiJub3RlczpyZWFkIiwiZXhwIjoxNzU2NDQyOTY4LCJpYXQiOjE3NTY0MzkzNjgsImp0aSI6ImQ3YWM1ZDEyLTEwNGEtNDY0ZC04NDNiLTk0YjMyYWU2OTU0OCJ9.DLhD5-YzrhQJM-GqujaxSe5Jh63gcVjnYNfLzp4s0bQ
+Content-Type: application/json
+
+### ====================================
+### AUTHORIZATION TESTS (Scope-Based)
+### ====================================
+
+### Test 8: No Scopes Token (403 Forbidden)
+# Generate no scopes token: node test/test-jwt.js basic (noScopesToken)
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJsaW1pdGVkIiwic2NvcGUiOiIiLCJleHAiOjE3NTY0NDI5NjgsImlhdCI6MTc1NjQzOTM2OCwianRpIjoiNmMxZmVlNjgtNDU1Mi00NDQwLWI5MDUtMDA2ODI3NGU1ZDQxIiwiY2xpZW50X2lkIjoidGVzdC1zcGEtY2xpZW50In0.fsq42u8rreOo3se_PaKvGzZ6xMs8MwbIVIwnUMSh9pg
+Content-Type: application/json
+
+### Test 9: Write-Only Token trying to READ (403 Forbidden)
+# Generate write-only token: node test/test-jwt.js basic (writeOnlyToken)
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJib2IiLCJzY29wZSI6Im5vdGVzOndyaXRlIiwiZXhwIjoxNzU2NDQyOTY4LCJpYXQiOjE3NTY0MzkzNjgsImp0aSI6IjkyNWVhMTE1LTI2NTctNDEzMi05YTI1LTFhZDg5MTdmZGE4OSIsImNsaWVudF9pZCI6InRlc3Qtc3BhLWNsaWVudCJ9.w5jsGM_n5Dpr5ZwzQ9GEFcPQKiA5iC7FGUAYWlymnQk
+Content-Type: application/json
+
+### Test 10: Read-Only Token trying to WRITE (403 Forbidden)
+# Generate read-only token: node test/test-jwt.js basic (readOnlyToken)
+POST http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJhbGljZSIsInNjb3BlIjoibm90ZXM6cmVhZCIsImV4cCI6MTc1NjQ0Mjk2OCwiaWF0IjoxNzU2NDM5MzY4LCJqdGkiOiIyZDJhZTcyMy02ZjUxLTRlMmItYjVjNC0zNWQxOThlMTY0YWEiLCJjbGllbnRfaWQiOiJ0ZXN0LXNwYS1jbGllbnQifQ.5pZT07MQ3EDix12-LsDvC1AE2zt36y9kp9g0kFmyqCU
+Content-Type: application/json
+
+{
+  "title": "Test Note",
+  "content": "This should fail with 403"
+}
+
+### ====================================
+### SUCCESS SCENARIOS - NOTES CRUD API
+### ====================================
+
+### Test 11: List All Notes (READ scope required) ✅
+# Generate read-only token: node test/test-jwt.js basic (readOnlyToken)
+# Replace <READ_TOKEN> with actual token
+GET http://localhost:3000/notes
+Authorization: Bearer <READ_TOKEN>
+Content-Type: application/json
+
+### Test 12: Create New Note (WRITE scope required) ✅
+# Generate write-only or full-access token: node test/test-jwt.js basic (writeOnlyToken or fullAccessToken)
+# Replace <WRITE_TOKEN> with actual token
+POST http://localhost:3000/notes
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "My First Note",
+  "content": "This is a test note created via API with proper OAuth 2.0 JWT token authentication and scope-based authorization."
+}
+
+### Test 13: Create Another Note ✅
+POST http://localhost:3000/notes
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "OAuth 2.0 Learning",
+  "content": "Understanding JWT tokens, scopes, and PKCE for secure API access."
+}
+
+### Test 14: Get Specific Note by ID (READ scope required) ✅
+# First create a note (Test 12), then use its ID in the URL below
+# Replace <READ_TOKEN> with read token and <NOTE_ID> with actual note ID
+GET http://localhost:3000/notes/<NOTE_ID>
+Authorization: Bearer <READ_TOKEN>
+Content-Type: application/json
+
+### Test 15: Update Note (WRITE scope required) ✅
+# Replace <WRITE_TOKEN> with write token and <NOTE_ID> with actual note ID
+PUT http://localhost:3000/notes/<NOTE_ID>
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "Updated Note Title",
+  "content": "This note has been updated through the OAuth 2.0 protected API endpoint."
+}
+
+### Test 16: Delete Note (WRITE scope required) ✅
+# Replace <WRITE_TOKEN> with write token and <NOTE_ID> with actual note ID
+DELETE http://localhost:3000/notes/<NOTE_ID>
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+### ====================================
+### FULL ACCESS TOKEN TESTS
+### ====================================
+
+### Test 17: Full Access - List Notes ✅
+# Generate full access token: node test/test-jwt.js basic (fullAccessToken)
+# Replace <FULL_ACCESS_TOKEN> with actual token
+GET http://localhost:3000/notes
+Authorization: Bearer <FULL_ACCESS_TOKEN>
+Content-Type: application/json
+
+### Test 18: Full Access - Create Note ✅
+POST http://localhost:3000/notes
+Authorization: Bearer <FULL_ACCESS_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "Full Access Note",
+  "content": "Created with a token that has both notes:read and notes:write scopes."
+}
+
+### Test 19: Full Access - Update Note ✅
+# Replace <NOTE_ID> with actual note ID from Test 18
+PUT http://localhost:3000/notes/<NOTE_ID>
+Authorization: Bearer <FULL_ACCESS_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "Updated Full Access Note", 
+  "content": "Updated with full access token - both read and write operations allowed."
+}
+
+### Test 20: Full Access - Delete Note ✅
+# Replace <NOTE_ID> with actual note ID from Test 18
+DELETE http://localhost:3000/notes/<NOTE_ID>
+Authorization: Bearer <FULL_ACCESS_TOKEN>
+Content-Type: application/json
+
+### ====================================
+### PKCE TOKEN TESTS (Enhanced Security)
+### ====================================
+
+### Test 21: PKCE Token with Confirmation Claim ✅
+# Generate PKCE token: node test/test-jwt.js pkce (pkceTokenWithConfirmation)
+# This token includes a 'cnf' (confirmation) claim for enhanced security
+GET http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJwa2NlLXVzZXIiLCJzY29wZSI6Im5vdGVzOnJlYWQgbm90ZXM6d3JpdGUiLCJleHAiOjE3NTY0NDI5NjgsImlhdCI6MTc1NjQzOTM2OCwianRpIjoiMTY0NzBjZDctNWIzOS00YmFkLTgyYmYtM2U0YmQ3MTMxNmEyIiwiY2xpZW50X2lkIjoidGVzdC1zcGEtY2xpZW50IiwiY25mIjp7Ing1dCNTMjU2IjoiMlIxb3dZQlBnUUlZa0tBVHphSTNQQkgwMG5BOUhjTE5xSGNrcVFISjlrYyJ9fQ.xd97Ad9E8lI4_2-_ZdzOLAMAteh33dM_vN1tQ17gkw4
+Content-Type: application/json
+
+### Test 22: Create Note with PKCE Token ✅
+POST http://localhost:3000/notes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3Qta2V5LTEifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjMwMDEiLCJhdWQiOiJub3Rlcy1hcGkiLCJzdWIiOiJwa2NlLXVzZXIiLCJzY29wZSI6Im5vdGVzOnJlYWQgbm90ZXM6d3JpdGUiLCJleHAiOjE3NTY0NDI5NjgsImlhdCI6MTc1NjQzOTM2OCwianRpIjoiMTY0NzBjZDctNWIzOS00YmFkLTgyYmYtM2U0YmQ3MTMxNmEyIiwiY2xpZW50X2lkIjoidGVzdC1zcGEtY2xpZW50IiwiY25mIjp7Ing1dCNTMjU2IjoiMlIxb3dZQlBnUUlZa0tBVHphSTNQQkgwMG5BOUhjTE5xSGNrcVFISjlrYyJ9fQ.xd97Ad9E8lI4_2-_ZdzOLAMAteh33dM_vN1tQ17gkw4
+Content-Type: application/json
+
+{
+  "title": "PKCE Protected Note",
+  "content": "This note was created using a JWT token with PKCE confirmation claim for enhanced security."
+}
+
+### ====================================
+### CUSTOM USER SCENARIOS
+### ====================================
+
+### Test 23: Custom User Token (Alice - Read Only) ✅
+# Generate custom token: node test/test-jwt.js custom alice notes:read
+GET http://localhost:3000/notes
+Authorization: Bearer <ALICE_READ_TOKEN>
+Content-Type: application/json
+
+### Test 24: Custom User Token (Bob - Write Only) ✅
+# Generate custom token: node test/test-jwt.js custom bob notes:write
+POST http://localhost:3000/notes
+Authorization: Bearer <BOB_WRITE_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "Bob's Note",
+  "content": "Created by Bob with write-only permissions."
+}
+
+### Test 25: Custom User Token (Admin - Full Access) ✅  
+# Generate custom token: node test/test-jwt.js custom admin notes:read notes:write
+GET http://localhost:3000/notes
+Authorization: Bearer <ADMIN_FULL_TOKEN>
+Content-Type: application/json
+
+### ====================================
+### ERROR HANDLING TESTS
+### ====================================
+
+### Test 26: Non-existent Note ID (404 Not Found) ✅
+GET http://localhost:3000/notes/non-existent-id
+Authorization: Bearer <READ_TOKEN>
+Content-Type: application/json
+
+### Test 27: Update Non-existent Note (404 Not Found) ✅
+PUT http://localhost:3000/notes/non-existent-id
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "Should Not Work",
+  "content": "This should return 404"
+}
+
+### Test 28: Delete Non-existent Note (404 Not Found) ✅
+DELETE http://localhost:3000/notes/non-existent-id
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+### Test 29: Invalid JSON Body (400 Bad Request) ✅
+POST http://localhost:3000/notes
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+{
+  "title": "Missing Content Field"
+  // Missing required "content" field should cause validation error
+}
+
+### Test 30: Empty Request Body (400 Bad Request) ✅
+POST http://localhost:3000/notes
+Authorization: Bearer <WRITE_TOKEN>
+Content-Type: application/json
+
+{}
+
+### ====================================
+### CROSS-ORIGIN REQUESTS (CORS)
+### ====================================
+
+### Test 31: OPTIONS Preflight Request ✅
+OPTIONS http://localhost:3000/notes
+Origin: http://localhost:5173
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: authorization,content-type
+
+### ====================================
+### PKCE FLOW EXAMPLES (Future Phase 2)
+### ====================================
+
+###
+### The following examples show what PKCE flow will look like in Phase 2
+### when the Identity Provider is implemented. These are for reference only.
+###
+
+# Step 1: Generate PKCE pair (from test script)
+# Code Verifier: rV0RGZLS0U7vzRyNifCinciZmdGCYDqkFv4tWksRX44
+# Code Challenge: XDltIlQTU1bpym99HCCF-cA2n8WwyFmXitcb9ZAuKb8
+# Method: S256
+
+# Step 2: Authorization Request (Phase 2 - Future)
+### GET http://localhost:3001/authorize?response_type=code&client_id=test-spa-client&redirect_uri=http://localhost:5173/callback&scope=openid+notes:read+notes:write&state=abc123&nonce=xyz789&code_challenge=XDltIlQTU1bpym99HCCF-cA2n8WwyFmXitcb9ZAuKb8&code_challenge_method=S256
+
+# Step 3: Token Exchange (Phase 2 - Future)  
+### POST http://localhost:3001/token
+### Content-Type: application/x-www-form-urlencoded
+### 
+### grant_type=authorization_code&code=<AUTH_CODE>&client_id=test-spa-client&redirect_uri=http://localhost:5173/callback&code_verifier=rV0RGZLS0U7vzRyNifCinciZmdGCYDqkFv4tWksRX44
+
+# Step 4: Use Access Token (Current Phase 1)
+### GET http://localhost:3000/notes
+### Authorization: Bearer <ACCESS_TOKEN_FROM_STEP_3>
+
+### ====================================
+### TESTING INSTRUCTIONS
+### ====================================
+
+###
+### How to run these tests:
+###
+### 1. Start the resource server:
+###    npm run dev
+###
+### 2. Generate fresh tokens:
+###    node test/test-jwt.js basic
+###    node test/test-jwt.js errors  
+###    node test/test-jwt.js pkce
+###
+### 3. Replace token placeholders:
+###    <READ_TOKEN> - Use readOnlyToken from basic command
+###    <WRITE_TOKEN> - Use writeOnlyToken from basic command
+###    <FULL_ACCESS_TOKEN> - Use fullAccessToken from basic command
+###    <NOTE_ID> - Replace with actual note ID from created notes
+###
+### 4. Execute requests in your HTTP client:
+###    - VS Code REST Client extension
+###    - Postman
+###    - Insomnia
+###    - curl commands
+###
+### 5. Expected responses:
+###    200 OK - Successful operations
+###    201 Created - Successful note creation
+###    204 No Content - Successful note deletion
+###    400 Bad Request - Invalid request data
+###    401 Unauthorized - Invalid/missing/expired token
+###    403 Forbidden - Valid token but insufficient scope
+###    404 Not Found - Note not found
+###
+### 6. Monitor server logs:
+###    Watch console output for detailed error messages
+###    JWT validation failures will show specific reasons
+###    Scope authorization failures will indicate required vs provided scopes
+###
+
+### ====================================
+### SECURITY TESTING CHECKLIST
+### ====================================
+
+###
+### ✅ Authentication Tests:
+### [ ] Missing Authorization header → 401
+### [ ] Invalid token format → 401  
+### [ ] Expired token → 401
+### [ ] Invalid signature → 401
+### [ ] Wrong issuer → 401
+### [ ] Wrong audience → 401
+###
+### ✅ Authorization Tests (Scope-Based):
+### [ ] No scopes for protected endpoint → 403
+### [ ] Wrong scope for operation → 403
+### [ ] Read scope for write operation → 403
+### [ ] Write scope for read operation → depends on implementation
+###
+### ✅ API Functionality:
+### [ ] List notes with read scope → 200
+### [ ] Create note with write scope → 201
+### [ ] Get specific note with read scope → 200
+### [ ] Update note with write scope → 200
+### [ ] Delete note with write scope → 204
+### [ ] Full access token works for all operations → 200/201/204
+###
+### ✅ Error Handling:
+### [ ] Non-existent note ID → 404
+### [ ] Invalid request body → 400
+### [ ] CORS preflight request → 200 with proper headers
+###
+### ✅ PKCE Security:
+### [ ] PKCE token with confirmation claim works → 200
+### [ ] Code verifier/challenge generation works
+### [ ] Code challenge verification works
+###

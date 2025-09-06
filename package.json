@@ -1,0 +1,33 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "Full-stack OIDC + OAuth 2.0 learning application",
+  "main": "resource-server/dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node resource-server/dist/app.js",
+    "dev": "ts-node-dev --watch resource-server/src resource-server/src/app.ts",
+    "build:watch": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["oauth2", "oidc", "jwt", "authentication", "authorization"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/uuid": "^9.0.7",
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3",
+    "ts-node-dev": "^2.0.0",
+    "nodemon": "^3.0.2"
+  }
+}

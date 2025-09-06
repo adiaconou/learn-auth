@@ -1,0 +1,54 @@
+{
+  "name": "identity-provider",
+  "version": "1.0.0",
+  "description": "OAuth 2.0 Authorization Server + OIDC Identity Provider for learning project",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "tsx watch src/app.ts",
+    "build:watch": "tsc --watch",
+    "test": "node test/test-flow.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "oauth2",
+    "oidc",
+    "identity-provider",
+    "authorization-server",
+    "jwt",
+    "pkce"
+  ],
+  "author": "Learning Project",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.1",
+    "ejs": "^3.1.9",
+    "crypto": "^1.0.1",
+    "node-forge": "^1.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.17.10",
+    "@types/cookie-parser": "^1.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/uuid": "^9.0.7",
+    "@types/ejs": "^3.1.5",
+    "@types/node-forge": "^1.3.11",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
