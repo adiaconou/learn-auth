@@ -168,12 +168,9 @@ router.get('/', async (req: Request, res: Response) => {
       // Store authorization request in session for post-login redirect
       (req.session as any).authorizationRequest = params;
       
-      // Add 15-second delay for reading console output
-      setTimeout(() => {
-        res.redirect(`/login?${new URLSearchParams({
-          return_to: req.originalUrl
-        }).toString()}`);
-      }, 15000);
+      res.redirect(`/login?${new URLSearchParams({
+        return_to: req.originalUrl
+      }).toString()}`);
       return;
     }
     
@@ -186,12 +183,9 @@ router.get('/', async (req: Request, res: Response) => {
       delete (req.session as any).user;
       (req.session as any).authorizationRequest = params;
       
-      // Add 15-second delay for reading console output
-      setTimeout(() => {
-        res.redirect(`/login?${new URLSearchParams({
-          return_to: req.originalUrl
-        }).toString()}`);
-      }, 15000);
+      res.redirect(`/login?${new URLSearchParams({
+        return_to: req.originalUrl
+      }).toString()}`);
       return;
     }
     
