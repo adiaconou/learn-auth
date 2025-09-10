@@ -1,0 +1,9 @@
+# Users Database - Plain Text Format
+# Format: id|username|email|passwordHash|isActive|createdAt
+# WARNING: This is for development only - passwords are stored in plain text!
+
+user-001|alice|alice@example.com|password123|true|2024-01-01T00:00:00.000Z
+user-002|bob|bob@example.com|secret456|true|2024-01-01T00:00:00.000Z
+user-003|charlie|charlie@example.com|mypassword|true|2024-01-01T00:00:00.000Z
+2dacfe82-c6ff-408b-be62-692a55714870|testuser|test@example.com|$2b$12$GyFwgrP43PGHlCB3SNGcm.pZ2ytsrlVOFWZ6trdYUTqtGXC1rMsKK|true|2025-09-10T01:28:58.685Z
+f534f32b-87f7-417d-bea2-f45cd534eb6f|admin|admin@example.com|$2b$12$1ebmPKTTDZoMTiunxk2f8O6ET5vsKu7lri72rQ.Hp/qgpAfyLGG0W|true|2025-09-10T01:28:58.853Z

@@ -31,6 +31,7 @@ import { config, validateConfig, logConfigSummary } from './config';
 import discoveryRoutes from './routes/discovery';
 import loginRoutes from './routes/login';
 import authorizeRoutes from './routes/authorize';
+import registerRoutes from './routes/register';
 
 const app = express();
 
@@ -124,6 +125,10 @@ async function startServer(): Promise<void> {
   // Authentication endpoints
   app.use('/', loginRoutes);
   console.log('   • /login, /logout - User authentication');
+  
+  // User registration endpoint
+  app.use('/register', registerRoutes);
+  console.log('   • /register - User registration');
 
   // OAuth 2.0 endpoints
   app.use('/authorize', authorizeRoutes);
@@ -178,7 +183,7 @@ async function startServer(): Promise<void> {
   });
 
   // Step 12: Start HTTP server
-  const server = app.listen(config.server.port, config.server.host, () => {
+  const server = app.listen(config.server.port, config.server.host, async () => {
     console.log('🎉 Identity Provider started successfully!');
     console.log(`   • Server: ${config.server.issuer}`);
     console.log(`   • Environment: ${config.environment}`);
@@ -194,6 +199,15 @@ async function startServer(): Promise<void> {
     console.log(`   • Frontend SPA: ${config.server.frontendUrl}`);
     console.log(`   • Resource Server: ${config.server.resourceServerUrl}`);
     console.log('');
+    
+    // Initialize user service (loads test users in development)
+    try {
+      const { initializeUserService } = await import('./services/user');
+      await initializeUserService();
+    } catch (error) {
+      console.error('❌ Failed to initialize user service:', error);
+    }
+    
     console.log('🚀 Ready to handle OAuth 2.0 + OIDC requests!');
   });
 

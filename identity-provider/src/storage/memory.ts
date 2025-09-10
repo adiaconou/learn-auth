@@ -5,6 +5,7 @@ import {
   RefreshToken, 
   ConsentGrant 
 } from './models';
+import { fileUserStore } from './file';
 
 /**
  * In-Memory Storage for OAuth 2.0 + OIDC Identity Provider
@@ -69,112 +70,10 @@ const consentGrants = new Map<string, ConsentGrant>();    // "userId:clientId" �
 /**
  * User Storage Operations
  * 
- * Manages user accounts with authentication credentials and profile information.
- * Provides lookups by ID, username, and email for different authentication flows.
+ * Now using file-based storage for persistent user accounts.
+ * Users are stored in a simple text file for easy inspection and manual creation.
  */
-export const userStore = {
-  /**
-   * Create a new user account
-   * 
-   * @param user User data to store
-   * @throws Error if username or email already exists
-   */
-  create(user: User): void {
-    // Check for duplicate username
-    if (usersByUsername.has(user.username)) {
-      throw new Error(`Username '${user.username}' already exists`);
-    }
-    
-    // Check for duplicate email
-    if (usersByEmail.has(user.email)) {
-      throw new Error(`Email '${user.email}' already exists`);
-    }
-    
-    // Store user with indexes
-    users.set(user.id, user);
-    usersByUsername.set(user.username, user.id);
-    usersByEmail.set(user.email, user.id);
-    
-    console.log(`👤 Created user: ${user.username} (${user.id})`);
-  },
-  
-  /**
-   * Find user by ID
-   * 
-   * @param userId User identifier
-   * @returns User or undefined if not found
-   */
-  findById(userId: string): User | undefined {
-    return users.get(userId);
-  },
-  
-  /**
-   * Find user by username (for login)
-   * 
-   * @param username Username to search for
-   * @returns User or undefined if not found
-   */
-  findByUsername(username: string): User | undefined {
-    const userId = usersByUsername.get(username);
-    return userId ? users.get(userId) : undefined;
-  },
-  
-  /**
-   * Find user by email address
-   * 
-   * @param email Email to search for  
-   * @returns User or undefined if not found
-   */
-  findByEmail(email: string): User | undefined {
-    const userId = usersByEmail.get(email);
-    return userId ? users.get(userId) : undefined;
-  },
-  
-  /**
-   * Update user information
-   * 
-   * @param userId User ID to update
-   * @param updates Partial user data to update
-   * @returns Updated user or undefined if not found
-   */
-  update(userId: string, updates: Partial<User>): User | undefined {
-    const user = users.get(userId);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...updates };
-    users.set(userId, updatedUser);
-    
-    console.log(`👤 Updated user: ${user.username} (${userId})`);
-    return updatedUser;
-  },
-  
-  /**
-   * Get all users (for admin/debug purposes)
-   * 
-   * @returns Array of all users
-   */
-  getAll(): User[] {
-    return Array.from(users.values());
-  },
-  
-  /**
-   * Delete user account
-   * 
-   * @param userId User ID to delete
-   * @returns True if deleted, false if not found
-   */
-  delete(userId: string): boolean {
-    const user = users.get(userId);
-    if (!user) return false;
-    
-    users.delete(userId);
-    usersByUsername.delete(user.username);
-    usersByEmail.delete(user.email);
-    
-    console.log(`👤 Deleted user: ${user.username} (${userId})`);
-    return true;
-  }
-};
+export const userStore = fileUserStore;
 
 /**
  * OAuth Client Storage Operations

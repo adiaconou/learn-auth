@@ -630,9 +630,30 @@ export function logSecurityEvent(
  * Initialize user service
  * 
  * Creates test users in development environment.
+ * Since we now use file-based storage, this ensures users from users.txt are available.
  */
 export async function initializeUserService(): Promise<void> {
-  if (process.env.NODE_ENV === 'development') {
+  const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
+  
+  if (isDevelopment) {
+    console.log('🔧 Initializing user service...');
+    
+    // First, try to load existing users from file to verify they're accessible
+    try {
+      const existingUsers = userStore.getAll();
+      console.log(`📄 Found ${existingUsers.length} existing users in file storage`);
+      
+      if (existingUsers.length > 0) {
+        console.log('👥 Available users:');
+        existingUsers.forEach(user => {
+          console.log(`   • ${user.username} (${user.email})`);
+        });
+      }
+    } catch (error) {
+      console.error('❌ Failed to load existing users:', error);
+    }
+    
+    // Then create any missing test users
     await createTestUsers();
   }
 }

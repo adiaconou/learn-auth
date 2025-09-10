@@ -336,8 +336,19 @@ router.get('/logout', (req: Request, res: Response) => {
   const confirm = req.query.confirm as string;
   
   if (confirm === 'true') {
-    // Auto-logout without confirmation
-    return router.handle({ method: 'POST', url: '/logout', body: {} } as any, res, () => {});
+    // Auto-logout without confirmation - redirect to POST logout
+    const username = req.session.user?.username || 'anonymous';
+    console.log(`👋 Auto-logging out user: ${username}`);
+    
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('❌ Session destruction failed:', err);
+      }
+      res.clearCookie('connect.sid');
+      console.log(`✅ User logged out successfully: ${username}`);
+      res.redirect('/login');
+    });
+    return;
   }
 
   // Display logout confirmation (simple page)

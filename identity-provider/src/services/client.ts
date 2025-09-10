@@ -15,7 +15,7 @@
 
 import { clientConfig } from '../config';
 import { debugLog } from '../config';
-import { OAuthClient, OAuthScope } from '../storage/models';
+import { OAuthClient } from '../storage/models';
 
 /**
  * OAuth Client Validation Result
@@ -72,6 +72,7 @@ export class ClientService {
         redirectUris: clientConfig.spaClient.redirectUris,
         allowedScopes: clientConfig.spaClient.allowedScopes,
         requirePkce: clientConfig.spaClient.requirePkce,
+        isActive: true,
         createdAt: new Date()
       };
       
@@ -89,6 +90,7 @@ export class ClientService {
         allowedScopes: clientConfig.apiClient.allowedScopes,
         secret: clientConfig.apiClient.secret,
         requirePkce: clientConfig.apiClient.requirePkce,
+        isActive: true,
         createdAt: new Date()
       };
       
